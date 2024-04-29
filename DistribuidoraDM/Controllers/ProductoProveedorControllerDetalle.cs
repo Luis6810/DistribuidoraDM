@@ -6,13 +6,13 @@ namespace DistribuidoraDM.Controllers
 {
     [ApiController]
     [Route("ProductoProvedor")]
-    public class ProductProveedorController : ControllerBase
+    public class ProductoProveedorDetalle : ControllerBase
     {
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            var respuesta = DataProductoProveedor.ObtenerTodosProductosProveedor();
+            var respuesta = DataProductoProveedorDetalle.ObtenerTodosProductosProveedor();
             if (respuesta.Ok)
             {
                 return Ok(respuesta.resultado);
@@ -27,7 +27,7 @@ namespace DistribuidoraDM.Controllers
         [HttpGet("Get/{id}")]
         public IActionResult Get(int id)
         {
-            var respuesta = DataProductoProveedor.ObtenerProductoProveedor(id);
+            var respuesta = DataProductoProveedorDetalle.ObtenerProductoProveedor(id);
             if (respuesta.Ok)
             {
                 return Ok(respuesta.resultado);
@@ -42,7 +42,7 @@ namespace DistribuidoraDM.Controllers
         [HttpGet("GetByName/{nombre}")]
         public IActionResult GetByName(string nombre)
         {
-            var respuesta = DataProductoProveedor.ObtenerProductoProveedorPorNombre(nombre);
+            var respuesta = DataProductoProveedorDetalle.ObtenerProductoProveedorPorNombre(nombre);
             if (respuesta.Ok)
             {
                 return Ok(respuesta.resultado);
@@ -57,7 +57,7 @@ namespace DistribuidoraDM.Controllers
         [HttpGet("GetByKey/{key}")]
         public IActionResult GetByKey(string key)
         {
-            var respuesta = DataProductoProveedor.ObtenerProductoProveedorPorClave(key);
+            var respuesta = DataProductoProveedorDetalle.ObtenerProductoProveedorPorClave(key);
             if (respuesta.Ok)
             {
                 return Ok(respuesta.resultado);
@@ -68,6 +68,22 @@ namespace DistribuidoraDM.Controllers
             }
 
         }
+
+        [HttpGet("GetSearch/{key},{idTipoProducto}")]
+        public IActionResult GetSearch(string key, int idTipoProducto)
+        {
+            var respuesta = DataProductoProveedorDetalle.ObtenerProductoProveedorBusqueda(key, idTipoProducto);
+            if (respuesta.Ok)
+            {
+                return Ok(respuesta.resultado);
+            }
+            else
+            {
+                return StatusCode(500, respuesta.Mensaje);
+            }
+
+        }
+
 
     }
 }

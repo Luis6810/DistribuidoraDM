@@ -1,0 +1,127 @@
+﻿@page "/productosProvedorBusqueda/{claveProducto}/{idTipoProducto}"
+@inject HttpClient Http
+<PageTitle>Distribuidora del Mal</PageTitle>
+
+<h1>Productos Provedores</h1>
+
+@if (productosProvedores != null)
+{
+ <div class="row">
+
+        <div class="col-md-6">
+            Clave: <input @bind="claveProducto" placeholder="Clave del Producto">
+        </div>
+       <div class="col-md-6">
+            Nombre: <input value="@productosProvedores.First().NombreProducto" placeholder="Nombre del Producto">
+        </div>
+</div>
+
+
+    <div class="row">
+
+        <div class="col-md-6 align-self-end">
+            <label for="tipos">Tipos de Provedores</label>
+                <select @bind="idTipoProducto" name="tipos" id="tipos">
+                    <option value="0">--Tipos Productos--</option>
+                    @if (tiposProductos != null)
+                    {
+                        @foreach (var tipo in tiposProductos)
+                        {
+                            <option value="@tipo.Id">@tipo.Nombre</option>
+                        }
+                    }
+
+                </select>
+
+        </div>
+
+        <div class="col-md-6">
+            EsActivo: <input type="checkbox" value="@productosProvedores.First().EsActivoProducto" placeholder="Clave del Producto">
+        </div>
+    </div>
+<div class="row">
+    <div class = "col align-self-end">
+        <button class="btn btn-primary">Buscar</button>
+    </div>
+</div>
+
+
+    <div class="container">
+
+
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Editar</th>
+                    <th>Nombre Proveedor</th>
+                    <th>Clave Producto</th>
+                    <th>Costo</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var productoP in productosProvedores)
+                {
+                    <tr>
+                         <td><button @onclick="()=>Editar(productoP.Id)" style="background: none; border: none;">
+                            <img src="ruta/a/imagen.jpg" alt="Texto Alternativo" style="width: 100px; height: 100px;" />
+                        </button>
+                        </td>
+                        <td>@productoP.NombreProveedor</td>
+                        <td>@productoP.ClaveProducto</td>
+                        <td>@productoP.PrecioProveedor</td>
+                        <td>@productoP.Id</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <Modal @ref="modal" />
+
+    </div>
+}
+
+@code {
+    private ProductoProveedorDTO[]? productosProvedores;
+    private TipoProducto[]? tiposProductos;
+    //private string? claveProducto;
+    //private string idTipoProducto = "0";
+
+    [Parameter]
+    public string claveProducto { get; set; }
+
+    [Parameter]
+    public string idTipoProducto { get; set; }
+
+        private Modal modal = default!;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        tiposProductos = await Http.GetFromJsonAsync<TipoProducto[]>(Config.BaseApiUrl + "TipoProductos");
+
+        productosProvedores = await Http.GetFromJsonAsync<ProductoProveedorDTO[]>(Config.BaseApiUrl + "ProductoProvedor/GetSearch/" + claveProducto + "," + idTipoProducto);
+    }
+
+    //private void Editar()
+    //{
+        
+    //}
+
+
+    private async Task Editar(int Id)
+    {
+        var parameters = new Dictionary<string, object>();
+        parameters.Add("IdProductoProveedor", Id);
+        await modal.ShowAsync<EditarProductoProveedorComponent>(title: "Producto Proveedor Detalles", parameters: parameters);
+    }
+
+
+
+
+
+}

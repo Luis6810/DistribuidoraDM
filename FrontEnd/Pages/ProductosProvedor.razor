@@ -1,0 +1,81 @@
+﻿@page "/productosProvedorListado"
+@inject HttpClient Http
+@inject NavigationManager _nav
+<PageTitle>Distribuidora del Mal</PageTitle>
+
+<h1>Productos Provedores</h1>
+
+@if (productosProvedores == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-6">
+                Clave: <input @bind = "claveProducto" placeholder="Clave del Producto">
+            </div>
+            <div class="col-md-6 align-self-end">
+                <label for="tipos">Tipos de Provedores</label>
+                    <select @bind="idTipoProducto" name="tipos" id="tipos">
+                    @foreach (var tipo in tiposProductos){
+                            <option value="@tipo.Id">@tipo.Nombre</option>
+                    }
+                </select>
+           
+            </div>
+        </div>
+        <div class="row">
+            <div class = "col align-self-end">
+                <button @onclick="@(()=>_nav.NavigateTo($"/productosProvedorBusqueda/{@claveProducto}/{@idTipoProducto}"))" class="btn btn-primary">Buscar</button>
+            </div>
+        </div>
+
+
+
+        <table class="table">
+        <thead>
+            <tr>
+                <th>Clave Proveedor</th>
+                <th>Nombre Producto</th>
+                <th>Clave Producto</th>
+                <th>Es Activo</th>
+                <th>Nombre Tipo Producto</th>
+                <th>Nombre Proveedor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var productoP in productosProvedores) 
+            {
+                <tr>
+                    <td>@productoP.ClaveProveedor</td>
+                    <td>@productoP.NombreProducto</td>
+                    <td>@productoP.ClaveProducto</td>
+                    <td>@productoP.EsActivoProducto</td>
+                    <td>@productoP.NombreTipoProducto</td>
+                    <td>@productoP.NombreProveedor</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+    
+}
+
+@code {
+    private ProductoProveedorDTO[]? productosProvedores;
+    private TipoProducto[]? tiposProductos;
+
+    private string? claveProducto;
+    private string idTipoProducto = "0";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        productosProvedores = await Http.GetFromJsonAsync<ProductoProveedorDTO[]>(Config.BaseApiUrl + "ProductoProvedor");
+        tiposProductos = await Http.GetFromJsonAsync<TipoProducto[]>(Config.BaseApiUrl + "TipoProductos");
+    }
+
+}

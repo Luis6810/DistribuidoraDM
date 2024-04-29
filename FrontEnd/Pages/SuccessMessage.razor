@@ -1,0 +1,15 @@
+<!-- SuccessMessage.razor -->
+@if (Mostrar)
+{
+    <div class="alert alert-success" role="alert">
+        @Contenido
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool Mostrar { get; set; }
+
+    [Parameter]
+    public string Contenido { get; set; }
+}

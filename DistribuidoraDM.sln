@@ -5,6 +5,8 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DistribuidoraDM", "DistribuidoraDM\DistribuidoraDM.csproj", "{73F2A213-9A1E-4A3C-90DF-61297C172DEA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrontEnd", "FrontEnd\FrontEnd.csproj", "{F45D89F7-FEBC-4DE8-8DF8-8AD25548C06A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{73F2A213-9A1E-4A3C-90DF-61297C172DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73F2A213-9A1E-4A3C-90DF-61297C172DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73F2A213-9A1E-4A3C-90DF-61297C172DEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F45D89F7-FEBC-4DE8-8DF8-8AD25548C06A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F45D89F7-FEBC-4DE8-8DF8-8AD25548C06A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F45D89F7-FEBC-4DE8-8DF8-8AD25548C06A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F45D89F7-FEBC-4DE8-8DF8-8AD25548C06A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

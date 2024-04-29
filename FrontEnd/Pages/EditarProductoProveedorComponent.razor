@@ -1,0 +1,104 @@
+﻿@using System.Text.Json
+@using System.Text
+@inject HttpClient Http
+
+
+<form @onsubmit="ActualizarProductoProveedor" method="post">
+  
+  <div class="form-group">
+    <label for="tipos">Tipos de Provedores</label>
+ <select @bind="productoProveedor.IdProveedor"  name="tipos" id="tipos">
+                    <option value="0">--Proveedor--</option>
+                    @if (tiposProductos != null)
+                    {
+                        @foreach (var tipo in tiposProductos)
+                        {
+                            <option value="@tipo.Id">@tipo.Nombre</option>
+                        }
+                    }
+
+                </select>
+  </div>
+  <div class="form-group">
+    <label for="ClaveProducto">Clave Producto</label>
+    <input type="text" class="form-control" id="ClaveProducto" @bind="productoProveedor.Clave" placeholder="Clave Producto">
+  </div>
+  <div class="form-group">
+    <label for="Costo">Costo</label>
+    <input @bind="productoProveedor.Precio" type="number" class="form-control" id="Costo" placeholder="Costo">
+  </div>
+ 
+  <button hidden="@(!botonGuardar)" type="submit" class="btn btn-primary">Actualizar</button>
+</form>
+
+<SuccessMessage Mostrar=mostrarMensajeExitoso Contenido="@contenidoMensajeExitoso" />
+<ErrorMessage Mostrar="@mostrarMensajeError" Contenido="@contenidoMensajeError" />
+
+
+@code {
+    private ProductoProveedor? productoProveedor;
+    private TipoProducto[]? tiposProductos;
+
+    private bool mostrarMensajeExitoso = false;
+    private bool mostrarMensajeError = false;
+    private string contenidoMensajeExitoso = "";
+    private string contenidoMensajeError = "";
+
+
+    private bool botonGuardar = true;
+
+
+
+    [Parameter] public int idProductoProveedor { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // get employee with {EmployeeId} from DB
+        tiposProductos = await Http.GetFromJsonAsync<TipoProducto[]>(Config.BaseApiUrl + "TipoProductos");
+
+        productoProveedor = await Http.GetFromJsonAsync<ProductoProveedor>(Config.BaseApiUrl + "ProductoProv/Get/"+idProductoProveedor);
+
+
+        base.OnInitialized();
+    }
+
+    protected async Task ActualizarProductoProveedor()
+    {
+
+        var httpClient = new HttpClient();
+
+        // Construye los datos que deseas enviar al servidor
+        var jsonContent = JsonSerializer.Serialize(productoProveedor);
+
+
+        var response = await httpClient.PostAsync(Config.BaseApiUrl+"ProductoProv", new StringContent(jsonContent, Encoding.UTF8, "application/json"));
+
+        // Verifica si la solicitud fue exitosa
+        if (response.IsSuccessStatusCode)
+        {
+            MostrarMensajeExitoso("Se actualizaron los datos correctamente");
+        }
+        else
+        {
+            MostrarMensajeExitoso("Hubo un error al actualizar los datos");
+
+        }
+
+        botonGuardar = false;
+
+        
+        // get employee with {EmployeeId} from DB
+    }
+
+   private void MostrarMensajeExitoso(string contenido)
+    {
+        mostrarMensajeExitoso = true;
+        contenidoMensajeExitoso = contenido;
+    }
+
+    private void MostrarMensajeError(string contenido)
+    {
+        mostrarMensajeError = true;
+        contenidoMensajeError = contenido;
+    }
+}

@@ -1,4 +1,4 @@
-﻿namespace DistribuidoraDM.Models
+﻿namespace FrontEnd
 {
     public class TipoProducto
     {

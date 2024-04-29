@@ -1,4 +1,4 @@
-﻿namespace DistribuidoraDM.Models
+﻿namespace FrontEnd
 {
     public class ProductoProveedorDTO
     {
@@ -11,7 +11,6 @@
         public string? NombreTipoProducto { get; set; }
         public string? NombreProveedor { get; set; }
         public decimal PrecioProveedor { get; set; }
-
     }
 
 

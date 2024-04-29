@@ -1,7 +1,5 @@
-﻿//using DistribuidoraDM.Models;
-using DistribuidoraDM.Models;
+﻿using DistribuidoraDM.Models;
 using System.Data.SqlClient;
-
 namespace DistribuidoraDM.Data
 {
     public class DataProductoProveedor
@@ -10,13 +8,13 @@ namespace DistribuidoraDM.Data
         public static Respuesta ObtenerProductoProveedor(int id)
         {
             Respuesta respuesta = new Respuesta();
-            ProductoProveedorDTO productoProveedor = new ProductoProveedorDTO();
+            ProductoProveedor productoProveedor = new ProductoProveedor();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    string storedProcedure = "spObtenerProductoProveedorDetalle";
+                    string storedProcedure = "spObtenerProductoProveedor";
                     SqlCommand command = new(storedProcedure, conn);
                     command.CommandType = System.Data.CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@Id", id);
@@ -24,23 +22,30 @@ namespace DistribuidoraDM.Data
 
                     if (myReader.Read())
                     {
-                        productoProveedor = new ProductoProveedorDTO()
+                        productoProveedor = new ProductoProveedor()
                         {
                             Id = Convert.ToInt32(myReader["Id"]),
-                            ClaveProveedor = myReader["ClaveProveedor"].ToString(),
-                            NombreProducto = myReader["NombreProducto"].ToString(),
-                            ClaveProducto = myReader["ClaveProducto"].ToString(),
-                            EsActivoProducto = Convert.ToBoolean(myReader["EsActivo"]),
-                            NombreTipoProducto = myReader["NombreTipoProducto"].ToString(),
-                            NombreProveedor = myReader["NombreProveedor"].ToString(),
+                            IdProducto = Convert.ToInt32(myReader["IdProducto"]),
+                            Clave = myReader["Clave"].ToString(),
+                            IdProveedor = Convert.ToInt32(myReader["IdProveedor"]),
+                            Precio = Convert.ToDecimal(myReader["Precio"]),
 
                         };
+
+                        respuesta.Ok = true;
+                        respuesta.resultado = productoProveedor;
+                        respuesta.excepcion = null;
+                        respuesta.Mensaje = "Operación completada con éxito";
+                    }
+                    else
+                    {
+                        respuesta.Ok = false;
+                        respuesta.resultado = null;
+                        respuesta.excepcion = null;
+                        respuesta.Mensaje = "Ninguna coincidencia en la base de datos";
                     }
 
-                    respuesta.Ok = true;
-                    respuesta.resultado = productoProveedor;
-                    respuesta.excepcion = null;
-                    respuesta.Mensaje = "Operación completada con éxito";
+
 
                     //SqlDataAdapter datos = new(query, conn);
                 }
@@ -58,90 +63,38 @@ namespace DistribuidoraDM.Data
 
         }
 
-
-        public static Respuesta ObtenerTodosProductosProveedor()
+        public static Respuesta ActualizarProductoProveedor(ProductoProveedor producto)
         {
             Respuesta respuesta = new Respuesta();
-
-            List<ProductoProveedorDTO> productosProvedor = new List<ProductoProveedorDTO>();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    string storedProcedure = "spObtenerTodosProductosProveedor";
+                    string storedProcedure = "spActualizarProductoProveedor";
                     SqlCommand command = new(storedProcedure, conn);
                     command.CommandType = System.Data.CommandType.StoredProcedure;
-                    SqlDataReader myReader = command.ExecuteReader();
+                    command.Parameters.AddWithValue("@Id", producto.Id);
+                    command.Parameters.AddWithValue("@IdProveedor", producto.IdProveedor);
+                    command.Parameters.AddWithValue("@Clave", producto.Clave);
+                    command.Parameters.AddWithValue("@Precio", producto.Precio);
 
-                    while (myReader.Read())
-                    {
-                        productosProvedor.Add(new ProductoProveedorDTO()
-                        {
-                            Id = Convert.ToInt32(myReader["Id"]),
-                            ClaveProveedor = myReader["ClaveProveedor"].ToString(),
-                            NombreProducto = myReader["NombreProducto"].ToString(),
-                            ClaveProducto = myReader["ClaveProducto"].ToString(),
-                            EsActivoProducto = Convert.ToBoolean(myReader["EsActivo"]),
-                            NombreTipoProducto = myReader["NombreTipoProducto"].ToString(),
-                            NombreProveedor = myReader["NombreProveedor"].ToString(),
-
-                        }); ;
+                   if(command.ExecuteNonQuery() > 0){
+                        respuesta.Ok = true;
+                        respuesta.resultado = null;
+                        respuesta.excepcion = null;
+                        respuesta.Mensaje = "Operación completada con éxito";
                     }
-                    respuesta.Ok = true;
-                    respuesta.resultado = productosProvedor;
-                    respuesta.excepcion = null;
-                    respuesta.Mensaje = "Operación completada con éxito";
-                    //SqlDataAdapter datos = new(query, conn);
-                }
-                catch (Exception ex)
-                {
-                    respuesta.Ok = false;
-                    respuesta.resultado = null;
-                    respuesta.excepcion = ex;
-                    respuesta.Mensaje = "Ocurrió un error en la base de datos";
-                }
-            }
-
-
-            return respuesta;
-
-        }
-
-        public static Respuesta ObtenerProductoProveedorPorNombre(string nombre)
-        {
-            Respuesta respuesta = new Respuesta();
-            List<ProductoProveedorDTO> productosProveedor = new List<ProductoProveedorDTO>();
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                try
-                {
-                    conn.Open();
-                    string storedProcedure = "spObtenerProductosProveedorPorNombre";
-                    SqlCommand command = new(storedProcedure, conn);
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@Nombre", nombre);
-                    SqlDataReader myReader = command.ExecuteReader();
-
-                    while (myReader.Read())
+                    
+                    else
                     {
-                        productosProveedor.Add(new ProductoProveedorDTO()
-                        {
-                            Id = Convert.ToInt32(myReader["Id"]),
-                            ClaveProveedor = myReader["ClaveProveedor"].ToString(),
-                            NombreProducto = myReader["NombreProducto"].ToString(),
-                            ClaveProducto = myReader["ClaveProducto"].ToString(),
-                            EsActivoProducto = Convert.ToBoolean(myReader["EsActivo"]),
-                            NombreTipoProducto = myReader["NombreTipoProducto"].ToString(),
-                            NombreProveedor = myReader["NombreProveedor"].ToString(),
-
-                        });
+                        respuesta.Ok = false;
+                        respuesta.resultado = null;
+                        respuesta.excepcion = null;
+                        respuesta.Mensaje = "No se pudo actualizar la base de datos";
                     }
 
-                    respuesta.Ok = true;
-                    respuesta.resultado = productosProveedor;
-                    respuesta.excepcion = null;
-                    respuesta.Mensaje = "Operación completada con éxito";
+
 
                     //SqlDataAdapter datos = new(query, conn);
                 }
@@ -158,58 +111,5 @@ namespace DistribuidoraDM.Data
             return respuesta;
 
         }
-
-        public static Respuesta ObtenerProductoProveedorPorClave(string clave)
-        {
-            Respuesta respuesta = new Respuesta();
-            List<ProductoProveedorDTO> productosProveedor = new List<ProductoProveedorDTO>();
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                try
-                {
-                    conn.Open();
-                    string storedProcedure = "spObtenerProductosProveedorPorClave";
-                    SqlCommand command = new(storedProcedure, conn);
-                    command.CommandType = System.Data.CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@Clave", clave);
-                    SqlDataReader myReader = command.ExecuteReader();
-
-                    while (myReader.Read())
-                    {
-                        productosProveedor.Add(new ProductoProveedorDTO()
-                        {
-                            Id = Convert.ToInt32(myReader["Id"]),
-                            ClaveProveedor = myReader["ClaveProveedor"].ToString(),
-                            NombreProducto = myReader["NombreProducto"].ToString(),
-                            ClaveProducto = myReader["ClaveProducto"].ToString(),
-                            EsActivoProducto = Convert.ToBoolean(myReader["EsActivo"]),
-                            NombreTipoProducto = myReader["NombreTipoProducto"].ToString(),
-                            NombreProveedor = myReader["NombreProveedor"].ToString(),
-
-                        });
-                    }
-
-                    respuesta.Ok = true;
-                    respuesta.resultado = productosProveedor;
-                    respuesta.excepcion = null;
-                    respuesta.Mensaje = "Operación completada con éxito";
-
-                    //SqlDataAdapter datos = new(query, conn);
-                }
-                catch (Exception ex)
-                {
-                    respuesta.Ok = false;
-                    respuesta.resultado = null;
-                    respuesta.excepcion = ex;
-                    respuesta.Mensaje = "Ocurrió un error en la base de datos";
-                }
-            }
-
-
-            return respuesta;
-
-        }
-
-
     }
 }
