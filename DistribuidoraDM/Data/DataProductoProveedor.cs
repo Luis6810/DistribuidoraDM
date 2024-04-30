@@ -161,5 +161,53 @@ namespace DistribuidoraDM.Data
             return respuesta;
 
         }
+
+        public static Respuesta EliminarProductoProveedor(int id)
+        {
+            Respuesta respuesta = new Respuesta();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string storedProcedure = "spEliminarProductosProveedor";
+                    SqlCommand command = new(storedProcedure, conn);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Id", id);
+
+
+                    if (command.ExecuteNonQuery() > 0)
+                    {
+                        respuesta.Ok = true;
+                        respuesta.resultado = null;
+                        respuesta.excepcion = null;
+                        respuesta.Mensaje = "Operación completada con éxito";
+                    }
+
+                    else
+                    {
+                        respuesta.Ok = false;
+                        respuesta.resultado = null;
+                        respuesta.excepcion = null;
+                        respuesta.Mensaje = "No se pudo actualizar la base de datos";
+                    }
+
+
+
+                    //SqlDataAdapter datos = new(query, conn);
+                }
+                catch (Exception ex)
+                {
+                    respuesta.Ok = false;
+                    respuesta.resultado = null;
+                    respuesta.excepcion = ex;
+                    respuesta.Mensaje = "Ocurrió un error en la base de datos";
+                }
+            }
+
+
+            return respuesta;
+
+        }
     }
 }

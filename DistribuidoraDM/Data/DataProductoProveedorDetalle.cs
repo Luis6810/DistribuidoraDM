@@ -243,7 +243,7 @@ namespace DistribuidoraDM.Data
                     SqlDataReader myReader = command.ExecuteReader();
 
 
-                    if (myReader.Read())
+                    while (myReader.Read())
                     {
                         productosProveedor.Add(new ProductoProveedorDTO()
                         {
@@ -258,6 +258,9 @@ namespace DistribuidoraDM.Data
 
                         });
 
+                        
+                    }
+                    if (productosProveedor.Count() > 0) {
                         respuesta.Ok = true;
                         respuesta.resultado = productosProveedor;
                         respuesta.excepcion = null;
@@ -265,8 +268,8 @@ namespace DistribuidoraDM.Data
                     }
                     else
                     {
-                        respuesta.Ok = false;
-                        respuesta.resultado = null;
+                        respuesta.Ok = true;
+                        respuesta.resultado = productosProveedor;
                         respuesta.excepcion = null;
                         respuesta.Mensaje = "Sin resultados";
                     }

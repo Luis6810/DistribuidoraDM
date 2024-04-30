@@ -6,7 +6,7 @@
 <form @onsubmit="ActualizarProductoProveedor" method="post">
   
   <div class="form-group">
-    <label for="tipos">Tipos de Provedores</label>
+    <label for="tipos">Tipos de Productos</label>
  <select @bind="productoProveedor.IdProveedor"  name="tipos" id="tipos">
                     <option value="0">--Proveedor--</option>
                     @if (tiposProductos != null)
@@ -25,7 +25,7 @@
   </div>
   <div class="form-group">
     <label for="Costo">Costo</label>
-    <input @bind="productoProveedor.Precio" type="number" class="form-control" id="Costo" placeholder="Costo">
+    <input @bind="productoProveedor.Precio" type="number" step=".01" class="form-control" id="Costo" placeholder="Costo">
   </div>
  
   <button hidden="@(!botonGuardar)" type="submit" class="btn btn-primary">Actualizar</button>
@@ -36,7 +36,7 @@
 
 
 @code {
-    private ProductoProveedor? productoProveedor;
+    private ProductoProveedor productoProveedor = new ProductoProveedor();
     private TipoProducto[]? tiposProductos;
 
     private bool mostrarMensajeExitoso = false;

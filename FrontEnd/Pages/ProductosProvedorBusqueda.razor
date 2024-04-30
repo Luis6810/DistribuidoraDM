@@ -20,7 +20,7 @@
     <div class="row">
 
         <div class="col-md-6 align-self-end">
-            <label for="tipos">Tipos de Provedores</label>
+            <label for="tipos">Tipos de Productos</label>
                 <select @bind="producto.IdTipoProducto" name="tipos" id="tipos">
                     <option value="0">--Tipos Productos--</option>
                     @if (tiposProductos != null)
@@ -36,7 +36,7 @@
         </div>
 
         <div class="col-md-6">
-            EsActivo: <input type="checkbox" value="@producto.EsActivo" placeholder="Clave del Producto">
+            EsActivo: <input type="checkbox" @bind="producto.EsActivo" placeholder="Clave del Producto">
         </div>
     </div>
 <div class="row">
@@ -62,34 +62,36 @@
                 </tr>
             </thead>
             <tbody>
+
                 @foreach (var productoP in productosProvedores)
                 {
                     <tr>
                          <td>
-                        <button @onclick="()=>Editar(productoP.Id)" style="background: none; border: none;">
-                            Editar
-                            <img src="ruta/a/imagen.jpg" alt="Texto Alternativo" style="width: 100px; height: 100px;" />
-                        </button>
+                            <button @onclick="()=>Editar(productoP.Id)" style="background: none; border: none;">
+                                <i class="bi bi-pencil"></i>    
+                            </button>
                         </td>
                         <td>@productoP.NombreProveedor</td>
                         <td>@productoP.ClaveProducto</td>
                         <td>@productoP.PrecioProveedor</td>
-                        <button @onclick="()=>Editar(productoP.Id)" style="background: none; border: none;">
-                            Eliminar
-                            <img src="ruta/a/imagen.jpg" alt="Texto Alternativo" style="width: 100px; height: 100px;" />
+                        <button @onclick="()=>Eliminar(productoP.Id)" style="background: none; border: none;">
+                            <i class="bi bi-file-earmark-x"></i>
                         </button>
                     </tr>
                 }
             </tbody>
         </table>
 
-        <button @onclick="()=>Insertar(producto.Id)" style="background: none; border: none;">
+        <button class="btn btn-outline-primary" @onclick="()=>Insertar(producto.Id)" style="background: none; border: none;">
             Agregar Proveedor
-            <img src="ruta/a/imagen.jpg" alt="Texto Alternativo" style="width: 100px; height: 100px;" />
+            <i class="bi bi-plus-circle"></i>
         </button>
 
-        <Modal @ref="modal" />
-        <Modal @ref="modalInsertar" />
+        <Modal OnHidden="()=>ActualizarLista()" @ref="modal" />
+        <Modal OnHidden="()=>ActualizarLista()" @ref="modalInsertar" />
+
+        <SuccessMessage Mostrar=@mostrarMensajeExitoso Contenido="@contenidoMensajeExitoso" />
+        <ErrorMessage Mostrar="@mostrarMensajeError" Contenido="@contenidoMensajeError" />
 
     </div>
 }
@@ -99,6 +101,11 @@
     private TipoProducto[]? tiposProductos;
     private Producto? producto;
 
+
+    private bool mostrarMensajeExitoso = false;
+    private bool mostrarMensajeError = false;
+    private string contenidoMensajeExitoso = "";
+    private string contenidoMensajeError = "";
     //private string? claveProducto;
     //private string idTipoProducto = "0";
 
@@ -108,8 +115,8 @@
 
     public string idTipoProducto { get; set; }
 
-        private Modal modal = default!;
-        private Modal modalInsertar = default!;
+    private Modal modal = default!;
+    private Modal modalInsertar = default!;
 
 
 
@@ -121,11 +128,12 @@
 
 
         productosProvedores = await Http.GetFromJsonAsync<ProductoProveedorDTO[]>(Config.BaseApiUrl + "ProductoProvedor/GetSearch/" + claveProducto + ","+idTipoProducto);
+
     }
 
     //private void Editar()
     //{
-        
+
     //}
 
 
@@ -133,15 +141,50 @@
     {
         var parameters = new Dictionary<string, object>();
         parameters.Add("IdProductoProveedor", Id);
-        
+
         await modal.ShowAsync<EditarProductoProveedorComponent>(title: "Producto Proveedor Detalles", parameters: parameters);
+       
     }
 
-     private async Task Insertar(int idProducto)
+    private async Task Insertar(int idProducto)
     {
         var parameters = new Dictionary<string, object>();
         parameters.Add("IdProducto", idProducto);
         await modalInsertar.ShowAsync<InsertarProductoProveedorComponent>(title: "Producto Proveedor Detalles", parameters: parameters);
+        
+
+    }
+
+    private async Task Eliminar(int idProducto)
+    {
+        var response = await Http.GetAsync(Config.BaseApiUrl + "ProductoProv/Delete/"+idProducto);
+        if (response.IsSuccessStatusCode)
+        {
+            MostrarMensajeExitoso("Los datos fueron eliminados correctamente");
+        }
+        else
+        {
+            MostrarMensajeError("Hubo un error al eliminar los datos");
+        }
+        productosProvedores = await Http.GetFromJsonAsync<ProductoProveedorDTO[]>(Config.BaseApiUrl + "ProductoProvedor/GetSearch/" + claveProducto + ","+idTipoProducto);
+    }
+
+    private async Task ActualizarLista()
+    {
+
+        productosProvedores = await Http.GetFromJsonAsync<ProductoProveedorDTO[]>(Config.BaseApiUrl + "ProductoProvedor/GetSearch/" + claveProducto + ","+idTipoProducto);
+    }
+
+    private void MostrarMensajeExitoso(string contenido)
+    {
+        mostrarMensajeExitoso = true;
+        contenidoMensajeExitoso = contenido;
+    }
+
+    private void MostrarMensajeError(string contenido)
+    {
+        mostrarMensajeError = true;
+        contenidoMensajeError = contenido;
     }
 
 

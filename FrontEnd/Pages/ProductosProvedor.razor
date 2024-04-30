@@ -38,29 +38,40 @@ else
         <table class="table">
         <thead>
             <tr>
-                <th>Clave Proveedor</th>
+                <th>Editar</th>
                 <th>Nombre Producto</th>
                 <th>Clave Producto</th>
-                <th>Es Activo</th>
-                <th>Nombre Tipo Producto</th>
-                <th>Nombre Proveedor</th>
+                <th>Precio</th>
+                <th>Eliminar</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var productoP in productosProvedores) 
             {
                 <tr>
-                    <td>@productoP.ClaveProveedor</td>
+                     <td>
+                            <button @onclick="()=>Editar(productoP.Id)" style="background: none; border: none;">
+                                <i class="bi bi-pencil"></i>    
+                            </button>
+                        </td>
                     <td>@productoP.NombreProducto</td>
                     <td>@productoP.ClaveProducto</td>
-                    <td>@productoP.EsActivoProducto</td>
-                    <td>@productoP.NombreTipoProducto</td>
-                    <td>@productoP.NombreProveedor</td>
+                    <td>@productoP.PrecioProveedor</td>
+                    <button @onclick="()=>Eliminar(productoP.Id)" style="background: none; border: none;">
+                            <i class="bi bi-file-earmark-x"></i>
+                        </button>
+
                 </tr>
             }
         </tbody>
     </table>
     </div>
+
+     <Modal OnHidden="()=>ActualizarLista()" @ref="modal" />
+        <Modal OnHidden="()=>ActualizarLista()" @ref="modalInsertar" />
+
+        <SuccessMessage Mostrar=@mostrarMensajeExitoso Contenido="@contenidoMensajeExitoso" />
+        <ErrorMessage Mostrar="@mostrarMensajeError" Contenido="@contenidoMensajeError" />
     
 }
 
@@ -68,8 +79,16 @@ else
     private ProductoProveedorDTO[]? productosProvedores;
     private TipoProducto[]? tiposProductos;
 
+    private bool mostrarMensajeExitoso = false;
+    private bool mostrarMensajeError = false;
+    private string contenidoMensajeExitoso = "";
+    private string contenidoMensajeError = "";
+
     private string? claveProducto;
     private string idTipoProducto = "0";
+
+     private Modal modal = default!;
+    private Modal modalInsertar = default!;
 
 
     protected override async Task OnInitializedAsync()
@@ -77,5 +96,56 @@ else
         productosProvedores = await Http.GetFromJsonAsync<ProductoProveedorDTO[]>(Config.BaseApiUrl + "ProductoProvedor");
         tiposProductos = await Http.GetFromJsonAsync<TipoProducto[]>(Config.BaseApiUrl + "TipoProductos");
     }
+
+    private async Task Editar(int Id)
+    {
+        var parameters = new Dictionary<string, object>();
+        parameters.Add("IdProductoProveedor", Id);
+
+        await modal.ShowAsync<EditarProductoProveedorComponent>(title: "Producto Proveedor Detalles", parameters: parameters);
+       
+    }
+
+     private async Task Insertar(int idProducto)
+    {
+        var parameters = new Dictionary<string, object>();
+        parameters.Add("IdProducto", idProducto);
+        await modalInsertar.ShowAsync<InsertarProductoProveedorComponent>(title: "Producto Proveedor Detalles", parameters: parameters);
+        
+
+    }
+
+    private async Task Eliminar(int idProducto)
+    {
+        var response = await Http.GetAsync(Config.BaseApiUrl + "ProductoProv/Delete/"+idProducto);
+        if (response.IsSuccessStatusCode)
+        {
+            MostrarMensajeExitoso("Los datos fueron eliminados correctamente");
+        }
+        else
+        {
+            MostrarMensajeError("Hubo un error al eliminar los datos");
+        }
+       productosProvedores = await Http.GetFromJsonAsync<ProductoProveedorDTO[]>(Config.BaseApiUrl + "ProductoProvedor");
+    }
+
+    private async Task ActualizarLista()
+    {
+
+        productosProvedores = await Http.GetFromJsonAsync<ProductoProveedorDTO[]>(Config.BaseApiUrl + "ProductoProvedor");
+    }
+
+    private void MostrarMensajeExitoso(string contenido)
+    {
+        mostrarMensajeExitoso = true;
+        contenidoMensajeExitoso = contenido;
+    }
+
+    private void MostrarMensajeError(string contenido)
+    {
+        mostrarMensajeError = true;
+        contenidoMensajeError = contenido;
+    }
+
 
 }

@@ -52,5 +52,20 @@ namespace DistribuidoraDM.Controllers
             }
 
         }
+
+        [HttpGet("Delete/{id}")]
+        public IActionResult Delete(int id)
+        {
+            var respuesta = DataProductoProveedor.EliminarProductoProveedor(id);
+            if (respuesta.Ok)
+            {
+                return Ok(respuesta.resultado);
+            }
+            else
+            {
+                return StatusCode(500, respuesta.Mensaje);
+            }
+
+        }
     }
 }
