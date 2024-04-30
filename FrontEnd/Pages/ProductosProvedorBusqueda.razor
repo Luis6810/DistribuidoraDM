@@ -12,7 +12,7 @@
             Clave: <input @bind="claveProducto" placeholder="Clave del Producto">
         </div>
        <div class="col-md-6">
-            Nombre: <input value="@productosProvedores.First().NombreProducto" placeholder="Nombre del Producto">
+            Nombre: <input value="@producto.Nombre" placeholder="Nombre del Producto">
         </div>
 </div>
 
@@ -21,7 +21,7 @@
 
         <div class="col-md-6 align-self-end">
             <label for="tipos">Tipos de Provedores</label>
-                <select @bind="idTipoProducto" name="tipos" id="tipos">
+                <select @bind="producto.IdTipoProducto" name="tipos" id="tipos">
                     <option value="0">--Tipos Productos--</option>
                     @if (tiposProductos != null)
                     {
@@ -36,7 +36,7 @@
         </div>
 
         <div class="col-md-6">
-            EsActivo: <input type="checkbox" value="@productosProvedores.First().EsActivoProducto" placeholder="Clave del Producto">
+            EsActivo: <input type="checkbox" value="@producto.EsActivo" placeholder="Clave del Producto">
         </div>
     </div>
 <div class="row">
@@ -65,20 +65,31 @@
                 @foreach (var productoP in productosProvedores)
                 {
                     <tr>
-                         <td><button @onclick="()=>Editar(productoP.Id)" style="background: none; border: none;">
+                         <td>
+                        <button @onclick="()=>Editar(productoP.Id)" style="background: none; border: none;">
+                            Editar
                             <img src="ruta/a/imagen.jpg" alt="Texto Alternativo" style="width: 100px; height: 100px;" />
                         </button>
                         </td>
                         <td>@productoP.NombreProveedor</td>
                         <td>@productoP.ClaveProducto</td>
                         <td>@productoP.PrecioProveedor</td>
-                        <td>@productoP.Id</td>
+                        <button @onclick="()=>Editar(productoP.Id)" style="background: none; border: none;">
+                            Eliminar
+                            <img src="ruta/a/imagen.jpg" alt="Texto Alternativo" style="width: 100px; height: 100px;" />
+                        </button>
                     </tr>
                 }
             </tbody>
         </table>
 
+        <button @onclick="()=>Insertar(producto.Id)" style="background: none; border: none;">
+            Agregar Proveedor
+            <img src="ruta/a/imagen.jpg" alt="Texto Alternativo" style="width: 100px; height: 100px;" />
+        </button>
+
         <Modal @ref="modal" />
+        <Modal @ref="modalInsertar" />
 
     </div>
 }
@@ -86,16 +97,19 @@
 @code {
     private ProductoProveedorDTO[]? productosProvedores;
     private TipoProducto[]? tiposProductos;
+    private Producto? producto;
+
     //private string? claveProducto;
     //private string idTipoProducto = "0";
 
     [Parameter]
     public string claveProducto { get; set; }
-
     [Parameter]
+
     public string idTipoProducto { get; set; }
 
         private Modal modal = default!;
+        private Modal modalInsertar = default!;
 
 
 
@@ -103,8 +117,10 @@
     {
 
         tiposProductos = await Http.GetFromJsonAsync<TipoProducto[]>(Config.BaseApiUrl + "TipoProductos");
+        producto = await Http.GetFromJsonAsync<Producto>(Config.BaseApiUrl + "Producto/Get/"+claveProducto);
 
-        productosProvedores = await Http.GetFromJsonAsync<ProductoProveedorDTO[]>(Config.BaseApiUrl + "ProductoProvedor/GetSearch/" + claveProducto + "," + idTipoProducto);
+
+        productosProvedores = await Http.GetFromJsonAsync<ProductoProveedorDTO[]>(Config.BaseApiUrl + "ProductoProvedor/GetSearch/" + claveProducto + ","+idTipoProducto);
     }
 
     //private void Editar()
@@ -117,7 +133,15 @@
     {
         var parameters = new Dictionary<string, object>();
         parameters.Add("IdProductoProveedor", Id);
+        
         await modal.ShowAsync<EditarProductoProveedorComponent>(title: "Producto Proveedor Detalles", parameters: parameters);
+    }
+
+     private async Task Insertar(int idProducto)
+    {
+        var parameters = new Dictionary<string, object>();
+        parameters.Add("IdProducto", idProducto);
+        await modalInsertar.ShowAsync<InsertarProductoProveedorComponent>(title: "Producto Proveedor Detalles", parameters: parameters);
     }
 
 

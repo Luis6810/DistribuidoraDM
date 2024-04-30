@@ -24,10 +24,24 @@ namespace DistribuidoraDM.Controllers
 
         }
 
-        [HttpPost()]
+        [HttpPost("Actualizar")]
         public IActionResult Update([FromBody] ProductoProveedor productoProveedor)
         {
             var respuesta = DataProductoProveedor.ActualizarProductoProveedor(productoProveedor);
+            if (respuesta.Ok)
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(500, respuesta.Mensaje);
+            }
+
+        }
+        [HttpPost("Insertar")]
+        public IActionResult Insertar([FromBody] ProductoProveedor productoProveedor)
+        {
+            var respuesta = DataProductoProveedor.InsertarProductoProveedor(productoProveedor);
             if (respuesta.Ok)
             {
                 return Ok();

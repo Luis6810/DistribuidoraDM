@@ -111,5 +111,55 @@ namespace DistribuidoraDM.Data
             return respuesta;
 
         }
+
+        public static Respuesta InsertarProductoProveedor(ProductoProveedor producto)
+        {
+            Respuesta respuesta = new Respuesta();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string storedProcedure = "spInsertarProductoProveedor";
+                    SqlCommand command = new(storedProcedure, conn);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@IdProducto", producto.IdProducto);
+                    command.Parameters.AddWithValue("@IdProveedor", producto.IdProveedor);
+                    command.Parameters.AddWithValue("@Clave", producto.Clave);
+                    command.Parameters.AddWithValue("@Precio", producto.Precio);
+
+                    if (command.ExecuteNonQuery() > 0)
+                    {
+                        respuesta.Ok = true;
+                        respuesta.resultado = null;
+                        respuesta.excepcion = null;
+                        respuesta.Mensaje = "Operación completada con éxito";
+                    }
+
+                    else
+                    {
+                        respuesta.Ok = false;
+                        respuesta.resultado = null;
+                        respuesta.excepcion = null;
+                        respuesta.Mensaje = "No se pudo actualizar la base de datos";
+                    }
+
+
+
+                    //SqlDataAdapter datos = new(query, conn);
+                }
+                catch (Exception ex)
+                {
+                    respuesta.Ok = false;
+                    respuesta.resultado = null;
+                    respuesta.excepcion = ex;
+                    respuesta.Mensaje = "Ocurrió un error en la base de datos";
+                }
+            }
+
+
+            return respuesta;
+
+        }
     }
 }
