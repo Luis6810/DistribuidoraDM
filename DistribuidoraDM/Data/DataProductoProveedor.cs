@@ -4,7 +4,10 @@ namespace DistribuidoraDM.Data
 {
     public class DataProductoProveedor
     {
-        private static string connectionString = Connection.connectionString;
+
+        private static string connectionString = Program.connectionString;
+
+
         public static Respuesta ObtenerProductoProveedor(int id)
         {
             Respuesta respuesta = new Respuesta();

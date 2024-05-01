@@ -1,11 +1,13 @@
 ﻿using System.Data.SqlClient;
 using DistribuidoraDM.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace DistribuidoraDM.Data
 {
-    public class DataProduct
-    {
-        private static string connectionString = Connection.connectionString;
+    public class DataProduct { 
+
+        private static string connectionString = Program.connectionString;
+
 
         public static Respuesta ObtenerTodosProductosProveedor()
         {
@@ -32,7 +34,7 @@ namespace DistribuidoraDM.Data
                             IdTipoProducto = Convert.ToInt32(myReader["IdTipoProducto"]),
                             Precio = Convert.ToDecimal(myReader["Precio"]),
                             EsActivo = Convert.ToBoolean(myReader["EsActivo"]),
-                           
+
 
                         }); ;
                     }
@@ -61,6 +63,7 @@ namespace DistribuidoraDM.Data
             Respuesta respuesta = new Respuesta();
 
             Producto productos = new Producto();
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
@@ -74,7 +77,7 @@ namespace DistribuidoraDM.Data
 
                     if (myReader.Read())
                     {
-                        productos=new Producto()
+                        productos = new Producto()
                         {
                             Id = Convert.ToInt32(myReader["Id"]),
                             Clave = myReader["Clave"].ToString(),
@@ -97,7 +100,7 @@ namespace DistribuidoraDM.Data
                         respuesta.excepcion = null;
                         respuesta.Mensaje = "No hay resultados";
                     }
-                   
+
                     //SqlDataAdapter datos = new(query, conn);
                 }
                 catch (Exception ex)

@@ -18,7 +18,7 @@ else
                 Clave: <input @bind = "claveProducto" placeholder="Clave del Producto">
             </div>
             <div class="col-md-6 align-self-end">
-                <label for="tipos">Tipos de Provedores</label>
+                <label for="tipos">Tipos de Productos</label>
                     <select @bind="idTipoProducto" name="tipos" id="tipos">
                     @foreach (var tipo in tiposProductos){
                             <option value="@tipo.Id">@tipo.Nombre</option>

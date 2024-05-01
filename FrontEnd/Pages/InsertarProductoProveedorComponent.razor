@@ -4,14 +4,14 @@
 <form @onsubmit="InsertarProductoProveedor" method="post">
   
   <div class="form-group">
-    <label for="tipos">Tipos de Productos</label>
+    <label for="tipos">Proveedores</label>
  <select @bind="productoProveedor.IdProveedor"  name="tipos" id="tipos">
                     <option value="0">--Proveedor--</option>
-                    @if (tiposProductos != null)
+                    @if (proveedores != null)
                     {
-                        @foreach (var tipo in tiposProductos)
+                        @foreach (var proveedor in proveedores)
                         {
-                            <option value="@tipo.Id">@tipo.Nombre</option>
+                            <option value="@proveedor.Id">@proveedor.Nombre</option>
                         }
                     }
 
@@ -26,7 +26,7 @@
     <input @bind="productoProveedor.Precio" type="number" step=".01" class="form-control" id="Costo" placeholder="Costo">
   </div>
  
-  <button hidden="@(!botonGuardar)" type="submit" class="btn btn-primary">Actualizar</button>
+  <button hidden="@(!botonGuardar)" type="submit" class="btn btn-primary">Guardar</button>
 </form>
 
 <SuccessMessage Mostrar=@mostrarMensajeExitoso Contenido="@contenidoMensajeExitoso" />
@@ -35,7 +35,7 @@
 
 @code {
     private ProductoProveedor? productoProveedor = new ProductoProveedor();
-    private TipoProducto[]? tiposProductos;
+    private Proveedor[]? proveedores;
 
     private bool mostrarMensajeExitoso = false;
     private bool mostrarMensajeError = false;
@@ -52,7 +52,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-        tiposProductos = await Http.GetFromJsonAsync<TipoProducto[]>(Config.BaseApiUrl + "TipoProductos");
+        proveedores = await Http.GetFromJsonAsync<Proveedor[]>(Config.BaseApiUrl + "Proveedor/GetAll");
 
         base.OnInitialized();
     }

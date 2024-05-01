@@ -10,7 +10,7 @@ namespace DistribuidoraDM.Controllers
     public class ProductoProveedorController : ControllerBase
     {
         [HttpGet("Get/{id}")]
-        public IActionResult Get(int id)
+                public IActionResult Get(int id)
         {
             var respuesta = DataProductoProveedor.ObtenerProductoProveedor(id);
             if (respuesta.Ok)

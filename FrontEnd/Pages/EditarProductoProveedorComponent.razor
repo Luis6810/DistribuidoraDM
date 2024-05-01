@@ -6,12 +6,12 @@
 <form @onsubmit="ActualizarProductoProveedor" method="post">
   
   <div class="form-group">
-    <label for="tipos">Tipos de Productos</label>
+    <label for="tipos">Proveeedores</label>
  <select @bind="productoProveedor.IdProveedor"  name="tipos" id="tipos">
                     <option value="0">--Proveedor--</option>
-                    @if (tiposProductos != null)
+                    @if (proveedores != null)
                     {
-                        @foreach (var tipo in tiposProductos)
+                        @foreach (var tipo in proveedores)
                         {
                             <option value="@tipo.Id">@tipo.Nombre</option>
                         }
@@ -37,7 +37,7 @@
 
 @code {
     private ProductoProveedor productoProveedor = new ProductoProveedor();
-    private TipoProducto[]? tiposProductos;
+    private Proveedor[]? proveedores;
 
     private bool mostrarMensajeExitoso = false;
     private bool mostrarMensajeError = false;
@@ -53,7 +53,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        tiposProductos = await Http.GetFromJsonAsync<TipoProducto[]>(Config.BaseApiUrl + "TipoProductos");
+        proveedores = await Http.GetFromJsonAsync<Proveedor[]>(Config.BaseApiUrl + "Proveedor/GetAll");
 
         productoProveedor = await Http.GetFromJsonAsync<ProductoProveedor>(Config.BaseApiUrl + "ProductoProv/Get/"+idProductoProveedor);
 

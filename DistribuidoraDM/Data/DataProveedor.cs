@@ -1,43 +1,40 @@
 ﻿using DistribuidoraDM.Models;
 using System.Data.SqlClient;
-
 namespace DistribuidoraDM.Data
 {
-    public class DataTipoProductos
+    public class DataProveedor
     {
         private static string connectionString = Program.connectionString;
-        public DataTipoProductos(IConfiguration configuration)
-        {
-            connectionString = configuration.GetConnectionString("DistribuidoraDelMal");
-        }
-        public static Respuesta ObtenerTodosTiposProductos()
+
+
+        public static Respuesta ObtenerTodosProductosProveedor()
         {
             Respuesta respuesta = new Respuesta();
 
-            List<TipoProducto> tiposProductos = new List<TipoProducto>();
+            List<Proveedor> productos = new List<Proveedor>();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    string storedProcedure = "spObtenerTiposProductos";
+                    string storedProcedure = "spObtenerProveedores";
                     SqlCommand command = new(storedProcedure, conn);
                     command.CommandType = System.Data.CommandType.StoredProcedure;
                     SqlDataReader myReader = command.ExecuteReader();
 
                     while (myReader.Read())
                     {
-                        tiposProductos.Add(new TipoProducto()
+                        productos.Add(new Proveedor()
                         {
                             Id = Convert.ToInt32(myReader["Id"]),
                             Nombre = myReader["Nombre"].ToString(),
-                            Descripcion = myReader["Descripcion"].ToString(),
+                            Descripcion = myReader["Descripcion"].ToString()
 
 
                         }); ;
                     }
                     respuesta.Ok = true;
-                    respuesta.resultado = tiposProductos;
+                    respuesta.resultado = productos;
                     respuesta.excepcion = null;
                     respuesta.Mensaje = "Operación completada con éxito";
                     //SqlDataAdapter datos = new(query, conn);
